@@ -28,9 +28,9 @@
 	</head>
 	<body>
 		<h1>Where the ISS at?</h1>
-		<p>latitude: <span id="lat"></span></p>
+		<p>latitude: <span id="lat"></span>°
 		<br />
-		<p>longitude: <span id="long"></span></p>
+		<p>longitude: <span id="long"></span>°</p>
 		<div id="issMap"></div>
 
 		<script>
@@ -54,6 +54,7 @@
 
 			// api url
 			const api_url = 'https://api.wheretheiss.at/v1/satellites/25544';
+			let firstTime = true;
 			// fetch function
 			async function getISS() {
 				const response = await fetch(api_url);
@@ -62,12 +63,17 @@
 				const { latitude, longitude } = data;
 				// const marker = L.marker([latitude, longitude]).addTo(mymap);
 				marker.setLatLng([latitude, longitude]);
-				document.getElementById('lat').textContent = latitude;
-				document.getElementById('long').textContent = longitude;
-				console.log(latitude);
-				console.log(longitude);
+				// stops map from reseting zoom every API call
+				if (firstTime) {
+					mymap.setView([latitude, longitude], 2);
+					firstTime = false;
+				}
+				document.getElementById('lat').textContent = latitude.toFixed(6);
+				document.getElementById('long').textContent = longitude.toFixed(6);
 			}
 			getISS();
+			// API is limited to 1 call per second
+			setInterval(getISS, 1000);
 		</script>
 	</body>
 </html>
