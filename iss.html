@@ -39,18 +39,29 @@
 			// documentation - attribution is obligatory as per the copyright notice
 			const attribution =
 				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMaps</a> contributors';
+			// making tiles
 			const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 			const tiles = L.tileLayer(tileUrl, { attribution });
 			tiles.addTo(mymap);
+			// custom icon image
+			const issIcon = L.icon({
+				iconUrl: 'ss.png',
+				iconSize: [50, 32],
+				iconAnchor: [25, 16]
+			});
+			// placing marker at location
+			const marker = L.marker([0, 0], { icon: issIcon }).addTo(mymap);
+
 			// api url
 			const api_url = 'https://api.wheretheiss.at/v1/satellites/25544';
 			// fetch function
-
 			async function getISS() {
 				const response = await fetch(api_url);
 				const data = await response.json();
 				// destructured data and took lat/long out
 				const { latitude, longitude } = data;
+				// const marker = L.marker([latitude, longitude]).addTo(mymap);
+				marker.setLatLng([latitude, longitude]);
 				document.getElementById('lat').textContent = latitude;
 				document.getElementById('long').textContent = longitude;
 				console.log(latitude);
